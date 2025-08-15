@@ -2,7 +2,7 @@
 
 # 🕷️ Crawler Master
 
-### *Real-time Web Performance Monitoring & Visualization*
+### _Real-time Web Performance Monitoring & Visualization_
 
 ![Node.js](https://img.shields.io/badge/node.js-v14+-green.svg)
 ![HTTP/2](https://img.shields.io/badge/HTTP/2-supported-blue.svg)
@@ -53,6 +53,7 @@ crawler-master/
 ## ⚙️ Installation
 
 ### Prerequisites
+
 - Node.js (v14 or higher)
 - MongoDB Atlas account (or local MongoDB)
 - SSL certificates for HTTPS
@@ -60,28 +61,34 @@ crawler-master/
 ### Setup Steps
 
 1. **Clone the repository**
+
    ```bash
    git clone <repository-url>
    cd crawler-master
    ```
 
 2. **Install dependencies**
+
    ```bash
    npm install
    ```
 
 3. **Configure MongoDB**
+
    - Open `db.js`
    - Replace the MongoDB URI with your connection string:
+
    ```javascript
-   const URI = 'mongodb+srv://username:password@cluster.mongodb.net/crawler?retryWrites=true'
+   const URI =
+   	'mongodb+srv://username:password@cluster.mongodb.net/crawler?retryWrites=true';
    ```
 
 4. **Generate SSL Certificates**
+
    ```bash
    # Create certificate directory
    mkdir -p ~/.cache/http2-push
-   
+
    # Generate self-signed certificates (for development)
    openssl req -x509 -newkey rsa:4096 -keyout ~/.cache/http2-push/key.pem -out ~/.cache/http2-push/cert.pem -days 365 -nodes
    ```
@@ -99,6 +106,7 @@ node index.js
 ### Accessing the Application
 
 1. Open your browser and navigate to:
+
    ```
    https://localhost:3000
    ```
@@ -116,14 +124,14 @@ node index.js
 
 ### Performance Metrics Explained
 
-| Metric | Description |
-|--------|-------------|
-| 🔍 **DNS Lookup** | Time to resolve domain to IP address |
-| 🔌 **TCP Connection** | Time to establish TCP connection |
-| 🔒 **TLS Handshake** | Time for SSL/TLS negotiation |
-| 📥 **First Byte** | Time to receive first byte of response |
-| 📦 **Content Transfer** | Time to download complete response |
-| ⏱️ **Total Time** | End-to-end request duration |
+| Metric                  | Description                            |
+| ----------------------- | -------------------------------------- |
+| 🔍 **DNS Lookup**       | Time to resolve domain to IP address   |
+| 🔌 **TCP Connection**   | Time to establish TCP connection       |
+| 🔒 **TLS Handshake**    | Time for SSL/TLS negotiation           |
+| 📥 **First Byte**       | Time to receive first byte of response |
+| 📦 **Content Transfer** | Time to download complete response     |
+| ⏱️ **Total Time**       | End-to-end request duration            |
 
 ---
 
@@ -137,11 +145,11 @@ graph TB
     Server --> Worker["🔧 Web Crawler"]
     Worker --> DB["🗄️ MongoDB"]
     Server --> Client
-    
+
     subgraph "Real-time Communication"
         WS["🔌 WebSocket"]
     end
-    
+
     Server -.-> WS
     WS -.-> Client
 ```
@@ -149,23 +157,27 @@ graph TB
 ### Core Components
 
 #### 🖥️ HTTP/2 Server (`server.js`)
+
 - Serves static files with server push
 - Handles WebSocket upgrades
 - Manages real-time communication
 - Implements custom WebSocket protocol
 
 #### 🔧 Web Crawler (`worker.js`)
+
 - Measures detailed performance metrics
 - Extracts links from HTML content
 - Implements concurrent crawling with limits
 - Uses high-resolution timers for accuracy
 
 #### 🗄️ Database Layer (`db.js`)
+
 - MongoDB connection management
 - Bulk write operations for performance
 - Data aggregation and retrieval
 
 #### 🌐 Client Interface
+
 - **HTML5 Canvas** for real-time charts
 - **WebSocket client** for live updates
 - **Event-driven architecture** with pub/sub pattern
@@ -188,8 +200,8 @@ export CERT_PATH="~/.cache/http2-push"
 
 ```javascript
 // In worker.js
-let pageAllowance = 50        // Maximum pages to crawl
-const concurrencyLimit = 5    // Concurrent requests
+let pageAllowance = 50; // Maximum pages to crawl
+const concurrencyLimit = 5; // Concurrent requests
 ```
 
 ---
@@ -199,24 +211,26 @@ const concurrencyLimit = 5    // Concurrent requests
 ### WebSocket Messages
 
 #### Client → Server
+
 ```json
 {
-  "url": "https://example.com"
+	"url": "https://example.com"
 }
 ```
 
 #### Server → Client
+
 ```json
 {
-  "url": "https://example.com/page",
-  "timings": {
-    "dnsLookup": 12.5,
-    "tcpConnection": 25.3,
-    "tlsHandshake": 45.7,
-    "firstByte": 120.8,
-    "contentTransfer": 89.2,
-    "total": 293.5
-  }
+	"url": "https://example.com/page",
+	"timings": {
+		"dnsLookup": 12.5,
+		"tcpConnection": 25.3,
+		"tlsHandshake": 45.7,
+		"firstByte": 120.8,
+		"contentTransfer": 89.2,
+		"total": 293.5
+	}
 }
 ```
 
@@ -242,6 +256,7 @@ DEBUG=* node index.js
 ### Testing URLs
 
 Try these URLs to see different performance characteristics:
+
 - `https://github.com` - Fast, modern site
 - `https://httpbin.org/delay/2` - Simulated latency
 - `https://example.com` - Minimal page
@@ -253,17 +268,20 @@ Try these URLs to see different performance characteristics:
 ### Common Issues
 
 **SSL Certificate Errors**
+
 ```bash
 # Regenerate certificates
 openssl req -x509 -newkey rsa:4096 -keyout ~/.cache/http2-push/key.pem -out ~/.cache/http2-push/cert.pem -days 365 -nodes
 ```
 
 **MongoDB Connection Issues**
+
 - Check your connection string in `db.js`
 - Verify MongoDB Atlas IP whitelist
 - Ensure network connectivity
 
 **WebSocket Connection Failed**
+
 - Verify HTTPS is working first
 - Check browser console for errors
 - Ensure port 3000 is not blocked
@@ -285,17 +303,19 @@ openssl req -x509 -newkey rsa:4096 -keyout ~/.cache/http2-push/key.pem -out ~/.c
 ```javascript
 // ecosystem.config.js
 module.exports = {
-  apps: [{
-    name: 'crawler-master',
-    script: 'index.js',
-    instances: 'max',
-    exec_mode: 'cluster',
-    env: {
-      NODE_ENV: 'production',
-      PORT: 3000
-    }
-  }]
-}
+	apps: [
+		{
+			name: 'crawler-master',
+			script: 'index.js',
+			instances: 'max',
+			exec_mode: 'cluster',
+			env: {
+				NODE_ENV: 'production',
+				PORT: 3000,
+			},
+		},
+	],
+};
 ```
 
 ---
@@ -307,18 +327,6 @@ module.exports = {
 - **Implement rate limiting** for production use
 - **Cache static assets** for better performance
 - **Use CDN** for global deployment
-
----
-
-## 🤝 Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
 
 ---
 
@@ -338,7 +346,7 @@ This project is licensed under the **ISC License** - see the [LICENSE](LICENSE) 
 
 <div align="center">
 
-**Made with ❤️ for web performance enthusiasts**
+**Made with ❤️ for learning purposes**
 
 ⭐ Star this repo if you found it helpful!
 
